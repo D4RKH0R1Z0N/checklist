@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checklist</title>
+  <style>
+    /* Reset default styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Body styles */
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 16px;
+    }
+    
+    /* Header styles */
+    header {
+      padding: 20px;
+      text-align: center;
+    }
+    
+    header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+    
+    /* Checklist styles */
+    .checklist {
+      margin: 20px auto;
+      width: 500px;
+      height: 300px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #007bff #111;
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    
+    .checklist-item input[type="checkbox"] {
+      margin-right: 10px;
+      appearance: none;
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-radius: 4px;
+      outline: none;
+      cursor: pointer;
+    }
+    
+    .checklist-item input[type="checkbox"]:checked {
+      background-color: #007bff;
+      border-color: #007bff;
+    }
+    
+    .checklist-item input[type="text"] {
+      flex: 1;
+      margin-right: 10px;
+      padding: 5px;
+      color: #fff;
+      background-color: transparent;
+      border: none;
+      border-bottom: 1px solid #fff;
+      outline: none;
+    }
+    
+    .checklist-item .delete-item-button {
+      background-color: #ff4444;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      padding: 5px 10px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .checklist-item .delete-item-button:hover {
+      background-color: #cc0000;
+    }
+    
+    /* Add Item button styles */
+    .add-item-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+    
+    .add-item-button {
+      background-color: #00cc66;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    .add-item-button:hover {
+      background-color: #00b359;
+    }
+
+    .add-item-container:nth-child(3) .add-item-button {
+      background-color: #007bff;
+    }
+
+    .add-item-container:nth-child(3) .add-item-button:hover {
+      background-color: #0056b3;
+    }
+
+    .add-item-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    .input-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #submit-button {
+      display: none;
+    }
+
+    #input-textarea {
+      width: 300px;
+      height: 100px;
+      padding: 5px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 16px;
+      text-align: center; /* Added */
+    }
+
+    /* Custom Scrollbar styles */
+    .checklist::-webkit-scrollbar {
+      width: 10px;
+    }
+    
+    .checklist::-webkit-scrollbar-track {
+      background-color: #111;
+    }
+    
+    .checklist::-webkit-scrollbar-thumb {
+      background-color: #007bff;
+      border-radius: 5px;
+    }
+
+    /* Clock styles */
+    .clock-container {
+      text-align: center;
+      font-size: 32px;
+      margin-top: 20px;
+    }
+
+    .clock {
+      display: inline-block;
+      padding: 10px;
+      color: #fff;
+    }
+
+    .clock-outline {
+      position: relative;
+      display: inline-block;
+    }
+
+    .clock-outline:before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border: 2px solid;
+      border-radius: 10px;
+      border-color: currentColor;
+    }
+
+    .error-message {
+      color: #ff4444;
+      text-align: center;
+    }
+
+    /* Mass Input styles */
+    .add-mass-input-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    #input-textarea {
+      width: 300px;
+      height: 100px;
+      padding: 5px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 16px;
+    }
+
+    /* Other */
+
+    .add-item-container {
+      margin: 20px auto;
+      text-align: center;
+    }
+
+    #input-textarea {
+      width: 300px;
+      height: 100px;
+      padding: 5px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 16px;
+      text-align: center;
+      margin: 10px auto;
+    }
+
+    #submit-container {
+      text-align: center;
+      margin: 10px auto;
+    }
+
+    #submit-button {
+      background-color: #00cc66;
+      border: none;
+      border-radius: 5px;
+      color: #fff;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #submit-button:hover {
+      background-color: #00b359;
+    }
+
+    #input-textarea {
+      width: 400px;
+      height: 150px;
+      padding: 10px;
+      font-family: 'Cascadia Code', monospace;
+      font-size: 16px;
+      color: #fff;
+      background-color: #111;
+      border: 2px solid #007bff;
+      border-radius: 4px;
+      resize: none;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Study Checklist with Clock</h1>
+    <div class="clock-container">
+      <span class="clock-outline">
+        <span class="clock" id="clock">00:00:00 AM</span>
+      </span>
+    </div>
+  </header>
+  
+  <div class="checklist"></div>
+  <div class="add-item-container">
+    <button class="add-item-button" onclick="addItem()">Add Item</button>
+  </div>
+
+  <p class="error-message"></p>
+
+  <div class="add-item-container">
+    <button class="add-item-button" onclick="toggleInputTextarea()">Add Multiple Items</button>
+    <textarea id="input-textarea" placeholder="Enter multiple items (one item per line)" style="display: none; margin: 10px auto; text-align: center;"></textarea>
+    <div id="submit-container" style="display: none; text-align: center;">
+      <button id="submit-button" onclick="submitItems()">Submit</button>
+    </div>
+  </div>
+  <script>
+    // Function to add an item to the checklist
+    function addItem() {
+      const checklist = document.querySelector('.checklist');
+      const newItem = document.createElement('div');
+      newItem.classList.add('checklist-item');
+      newItem.innerHTML = `
+        <input type="checkbox" id="item${checklist.childElementCount + 1}">
+        <input type="text" class="item-label" value="New Item">
+        <button class="delete-item-button">Delete</button>
+      `;
+      checklist.appendChild(newItem);
+
+      // Store the updated checklist in local storage
+      saveChecklistToLocalStorage();
+
+      // Remove error message if present
+      removeErrorMessage();
+    }
+
+    // Function to add multiple items to the checklist
+    function addMultipleItems() {
+      const checklist = document.querySelector('.checklist');
+      const inputTextArea = document.querySelector('#input-textarea');
+      const items = inputTextArea.value.trim().split('\n');
+
+      if (items.length === 0) {
+        displayErrorMessage();
+        return;
+      }
+
+      items.forEach((itemText) => {
+        const newItem = document.createElement('div');
+        newItem.classList.add('checklist-item');
+        newItem.innerHTML = `
+          <input type="checkbox" id="item${checklist.childElementCount + 1}">
+          <input type="text" class="item-label" value="${itemText}">
+          <button class="delete-item-button">Delete</button>
+        `;
+        checklist.appendChild(newItem);
+      });
+
+      // Store the updated checklist in local storage
+      saveChecklistToLocalStorage();
+
+      // Clear the input textarea
+      inputTextArea.value = '';
+
+      // Remove error message if present
+      removeErrorMessage();
+    }
+
+    // Function to remove an item from the checklist
+    function removeItem(item) {
+      const checklist = document.querySelector('.checklist');
+      const itemCount = checklist.childElementCount;
+
+      if (itemCount > 1) {
+        checklist.removeChild(item);
+
+        // Store the updated checklist in local storage
+        saveChecklistToLocalStorage();
+
+        // Remove error message if present
+        removeErrorMessage();
+      } else {
+        displayErrorMessage();
+      }
+    }
+
+    // Function to save the checklist to local storage
+    function saveChecklistToLocalStorage() {
+      const checklistItems = Array.from(document.querySelectorAll('.checklist-item'));
+      const checklistData = [];
+
+      checklistItems.forEach((item) => {
+        const itemLabel = item.querySelector('.item-label').value;
+        checklistData.push(itemLabel);
+      });
+
+      localStorage.setItem('checklist', JSON.stringify(checklistData));
+    }
+
+    // Function to load the checklist from local storage
+    function loadChecklistFromLocalStorage() {
+      const checklist = document.querySelector('.checklist');
+      const checklistData = localStorage.getItem('checklist');
+
+      if (checklistData) {
+        const checklistItems = JSON.parse(checklistData);
+
+        checklistItems.forEach((itemLabel) => {
+          const newItem = document.createElement('div');
+          newItem.classList.add('checklist-item');
+          newItem.innerHTML = `
+            <input type="checkbox" id="item${checklist.childElementCount + 1}">
+            <input type="text" class="item-label" value="${itemLabel}">
+            <button class="delete-item-button">Delete</button>
+          `;
+          checklist.appendChild(newItem);
+        });
+      }
+    }
+
+    // Function to display an error message
+    function displayErrorMessage() {
+      const error_message_ = document.querySelector('.error-message');
+      
+      error_message_.textContent = "You must Aleast have one item.";
+    }
+
+    // Function to remove the error message
+    function removeErrorMessage() {
+      const errorMessage = document.querySelector('.error-message');
+
+      if (errorMessage) {
+        errorMessage.textContent = "";
+      }
+    }
+
+    // Function to add multiple items to the checklist
+    function addMultipleItems() {
+      const checklist = document.querySelector('.checklist');
+      const inputTextArea = document.querySelector('#input-textarea');
+      const items = inputTextArea.value.trim().split('\n');
+
+      // Check if at least one item with a non-space character is entered
+      const containsNonSpaceCharacter = items.some(item => item.trim().length > 0);
+
+      if (containsNonSpaceCharacter) {
+        items.forEach((itemText) => {
+          const newItem = document.createElement('div');
+          newItem.classList.add('checklist-item');
+          newItem.innerHTML = `
+            <input type="checkbox" id="item${checklist.childElementCount + 1}">
+            <input type="text" class="item-label" value="${itemText}">
+            <button class="delete-item-button">Delete</button>
+          `;
+          checklist.appendChild(newItem);
+        });
+
+        // Store the updated checklist in local storage
+        saveChecklistToLocalStorage();
+
+        // Clear the input textarea
+        inputTextArea.value = '';
+
+        // Remove error message if present
+        removeErrorMessage();
+      } else {
+        displayErrorMessage();
+      }
+    }
+    // Event listener for deleting an item
+    document.addEventListener('click', function(event) {
+      if (event.target.classList.contains('delete-item-button')) {
+        const item = event.target.parentElement;
+        removeItem(item);
+      }
+    });
+
+    // Event listener for saving checklist items on input change
+    document.addEventListener('input', function(event) {
+      if (event.target.classList.contains('item-label')) {
+        saveChecklistToLocalStorage();
+      }
+    });
+
+    // Event listener for page load
+    window.addEventListener('load', function() {
+      loadChecklistFromLocalStorage();
+    });
+
+    // Function to toggle the visibility of the input textarea and submit button
+    function toggleInputTextarea() {
+      const inputTextarea = document.querySelector('#input-textarea');
+      const submitContainer = document.querySelector('#submit-container');
+      const submitButton = document.querySelector('#submit-button');
+
+      if (inputTextarea.style.display === 'none') {
+        inputTextarea.style.display = 'block';
+        submitContainer.style.display = 'block';
+        submitButton.style.display = 'block';
+        submitButton.style.margin = 'auto';
+      } else {
+        inputTextarea.style.display = 'none';
+        submitContainer.style.display = 'none';
+        submitButton.style.display = 'none';
+      }
+    }
+
+    // Function to submit the items from the input textarea
+    function submitItems() {
+      const inputTextarea = document.querySelector('#input-textarea');
+      const items = inputTextarea.value.trim().split('\n');
+      addMultipleItems(items);
+      inputTextarea.value = '';
+      toggleInputTextarea();
+    }
+
+    // Clock functionality
+    setInterval(updateClock, 1000);
+
+    function updateClock() {
+      const clockElement = document.querySelector('.clock');
+      const currentTime = new Date();
+      let hours = currentTime.getHours();
+      let minutes = currentTime.getMinutes();
+      let seconds = currentTime.getSeconds();
+      let meridiem = 'AM'; // Default to 'AM'
+
+      // Convert hours to 12-hour format
+      if (hours >= 12) {
+        meridiem = 'PM';
+        if (hours > 12) {
+          hours -= 12;
+        }
+      }
+
+      // Add leading zeros to minutes and seconds if necessary
+      minutes = padZero(minutes);
+      seconds = padZero(seconds);
+
+      // Build the formatted time string
+      const timeString = `${hours}:${minutes}:${seconds} ${meridiem}`;
+
+      // Update the clock element with the formatted time
+      clockElement.textContent = timeString;
+    }
+
+    // Pad a number with leading zeros if necessary
+    function padZero(number) {
+      return number < 10 ? '0' + number : number;
+    }
+
+    // Call the updateClock function initially to display the current time
+    updateClock();
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
