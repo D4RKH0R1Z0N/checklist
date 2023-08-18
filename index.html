@@ -256,7 +256,7 @@
 </head>
 <body>
   <header>
-    <h1>Study Checklist with Clock</h1>
+    <h1>Checklist with Clock</h1>
     <div class="clock-container">
       <span class="clock-outline">
         <span class="clock" id="clock">00:00:00 AM</span>
@@ -279,6 +279,12 @@
     </div>
   </div>
   <script>
+    function sanitizeInput(input) {
+      const tempElement = document.createElement('div');
+      tempElement.textContent = input;
+      return tempElement.innerHTML;
+    }
+
     // Function to add an item to the checklist
     function addItem() {
       const checklist = document.querySelector('.checklist');
@@ -299,36 +305,38 @@
     }
 
     // Function to add multiple items to the checklist
-    function addMultipleItems() {
+    function addMultipleItems(items) {
       const checklist = document.querySelector('.checklist');
-      const inputTextArea = document.querySelector('#input-textarea');
-      const items = inputTextArea.value.trim().split('\n');
 
-      if (items.length === 0) {
+      if (items.length > 0) {
+        items.forEach((itemText) => {
+          const trimmedText = itemText.trim();
+          if (trimmedText.length > 0) {
+            const newItem = document.createElement('div');
+            newItem.classList.add('checklist-item');
+            newItem.innerHTML = `
+              <input type="checkbox">
+              <input type="text" class="item-label" value="${sanitizeInput(trimmedText)}">
+              <button class="delete-item-button">Delete</button>
+            `;
+            checklist.appendChild(newItem);
+          }
+        });
+
+        // Store the updated checklist in local storage
+        saveChecklistToLocalStorage();
+
+        // Clear the input textarea
+        const inputTextArea = document.querySelector('#input-textarea');
+        inputTextArea.value = '';
+
+        // Remove error message if present
+        removeErrorMessage();
+      } else {
         displayErrorMessage();
-        return;
       }
-
-      items.forEach((itemText) => {
-        const newItem = document.createElement('div');
-        newItem.classList.add('checklist-item');
-        newItem.innerHTML = `
-          <input type="checkbox" id="item${checklist.childElementCount + 1}">
-          <input type="text" class="item-label" value="${itemText}">
-          <button class="delete-item-button">Delete</button>
-        `;
-        checklist.appendChild(newItem);
-      });
-
-      // Store the updated checklist in local storage
-      saveChecklistToLocalStorage();
-
-      // Clear the input textarea
-      inputTextArea.value = '';
-
-      // Remove error message if present
-      removeErrorMessage();
     }
+
 
     // Function to remove an item from the checklist
     function removeItem(item) {
@@ -355,7 +363,8 @@
 
       checklistItems.forEach((item) => {
         const itemLabel = item.querySelector('.item-label').value;
-        checklistData.push(itemLabel);
+        const isChecked = item.querySelector('input[type="checkbox"]').checked; // Get checkbox state
+        checklistData.push({ label: itemLabel, checked: isChecked });
       });
 
       localStorage.setItem('checklist', JSON.stringify(checklistData));
@@ -369,15 +378,19 @@
       if (checklistData) {
         const checklistItems = JSON.parse(checklistData);
 
-        checklistItems.forEach((itemLabel) => {
+        checklistItems.forEach((itemData) => {
           const newItem = document.createElement('div');
           newItem.classList.add('checklist-item');
           newItem.innerHTML = `
             <input type="checkbox" id="item${checklist.childElementCount + 1}">
-            <input type="text" class="item-label" value="${itemLabel}">
+            <input type="text" class="item-label" value="${itemData.label}">
             <button class="delete-item-button">Delete</button>
           `;
           checklist.appendChild(newItem);
+
+          // Set checkbox state
+          const checkbox = newItem.querySelector('input[type="checkbox"]');
+          checkbox.checked = itemData.checked;
         });
       }
     }
@@ -389,10 +402,8 @@
       error_message_.textContent = "You must Aleast have one item.";
     }
 
-    // Function to remove the error message
     function removeErrorMessage() {
       const errorMessage = document.querySelector('.error-message');
-
       if (errorMessage) {
         errorMessage.textContent = "";
       }
@@ -404,19 +415,19 @@
       const inputTextArea = document.querySelector('#input-textarea');
       const items = inputTextArea.value.trim().split('\n');
 
-      // Check if at least one item with a non-space character is entered
-      const containsNonSpaceCharacter = items.some(item => item.trim().length > 0);
-
-      if (containsNonSpaceCharacter) {
+      if (items.length > 0) {
         items.forEach((itemText) => {
-          const newItem = document.createElement('div');
-          newItem.classList.add('checklist-item');
-          newItem.innerHTML = `
-            <input type="checkbox" id="item${checklist.childElementCount + 1}">
-            <input type="text" class="item-label" value="${itemText}">
-            <button class="delete-item-button">Delete</button>
-          `;
-          checklist.appendChild(newItem);
+          const trimmedText = itemText.trim();
+          if (trimmedText.length > 0) {
+            const newItem = document.createElement('div');
+            newItem.classList.add('checklist-item');
+            newItem.innerHTML = `
+              <input type="checkbox">
+              <input type="text" class="item-label" value="${sanitizeInput(trimmedText)}">
+              <button class="delete-item-button">Delete</button>
+            `;
+            checklist.appendChild(newItem);
+          }
         });
 
         // Store the updated checklist in local storage
@@ -431,6 +442,7 @@
         displayErrorMessage();
       }
     }
+
     // Event listener for deleting an item
     document.addEventListener('click', function(event) {
       if (event.target.classList.contains('delete-item-button')) {
@@ -449,6 +461,12 @@
     // Event listener for page load
     window.addEventListener('load', function() {
       loadChecklistFromLocalStorage();
+    });
+
+    document.addEventListener('change', function(event) {
+      if (event.target.matches('.checklist-item input[type="checkbox"]')) {
+        saveChecklistToLocalStorage();
+      }
     });
 
     // Function to toggle the visibility of the input textarea and submit button
